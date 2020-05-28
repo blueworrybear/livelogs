@@ -24,4 +24,3 @@ jobs:
         coverageCommand: go test -coverprofile=c.out ./...
         coverageLocations: c.out:gocov
         prefix: github.com/blueworrybear/livelogs
-    

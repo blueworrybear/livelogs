@@ -1,0 +1,34 @@
+name: Go Test
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches-ignore:
+    - release
+
+jobs:
+  build:
+    name: testing
+    runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: 055c4795f09fe218b101ab59ab6601e8fb5c60df89b60f5177b939a2682f819d
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.13'
+    - name: Download cc-test-reporter
+      uses: wei/curl@v1
+      with:
+        args: -L --output cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+    - name: go test and report
+      run: |
+        chmod 775 ./cc-test-reporter
+        ./cc-test-reporter before-build
+        go get github.com/axw/gocov/gocov
+        gocov test -coverprofile=out ./...
+        ./cc-test-reporter format-coverage --input-type gocov out
+        ./cc-test-reporter upload-coverage
+        ./cc-test-reporter after-build
+    

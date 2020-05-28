@@ -25,6 +25,6 @@ jobs:
         CC_TEST_REPORTER_ID: 055c4795f09fe218b101ab59ab6601e8fb5c60df89b60f5177b939a2682f819d
       with:
         coverageCommand: bash scripts/test.sh
-        coverageLocations: out:gocov
+        coverageLocations: coverage.json:gocov
 
     

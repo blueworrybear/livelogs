@@ -24,7 +24,7 @@ jobs:
         args: '-L --output cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64'
     - name: go test and report
       run: |
-        chmod 775 ./cc-test-reporter
+        chmod +x ./cc-test-reporter
         ./cc-test-reporter before-build
         go get github.com/axw/gocov/gocov
         gocov test -coverprofile=out ./...

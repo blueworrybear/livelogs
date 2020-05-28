@@ -1,0 +1,7 @@
+plugins:
+  gofmt:
+    enabled: true
+  golint:
+    enabled: true
+    config:
+      min_confidence: 0.9

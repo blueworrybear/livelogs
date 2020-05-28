@@ -21,7 +21,7 @@ jobs:
     - name: Download cc-test-reporter
       uses: wei/curl@v1
       with:
-        args: -L --output cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+        args: '-L --output cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64'
     - name: go test and report
       run: |
         chmod 775 ./cc-test-reporter

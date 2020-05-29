@@ -1,4 +1,4 @@
-package main
+package livelogs
 
 func main() {
 	// test

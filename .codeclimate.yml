@@ -7,3 +7,19 @@ plugins:
     enabled: true
     config:
       min_confidence: 0.9
+exclude_patterns:
+- 'config/'
+- 'db/'
+- 'dist/'
+- 'features/'
+- '**/node_modules/'
+- 'script/'
+- '**/spec/'
+- '**/test/'
+- '**/tests/'
+- 'Tests/'
+- '**/vendor/'
+- '**/*_test.go'
+- '**/*.d.ts'
+- '*.md'
+- 'mock/'

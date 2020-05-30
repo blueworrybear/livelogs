@@ -74,7 +74,7 @@ func (l *LiveLog) Remove(ctx context.Context) error {
 	if err := l.stream.Delete(ctx, l.id); err != nil {
 		return err
 	}
-	return l.store.Delete(id)
+	return l.store.Delete(l.id)
 }
 
 func (l *LiveLog) Tail(ctx context.Context) (<-chan *core.LogLine, error) {

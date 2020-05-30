@@ -50,6 +50,19 @@ func (s *logStore) Find(id int64) (io.ReadCloser, error) {
 }
 
 func (s *logStore) Update(id int64, r io.Reader) error {
+	session := s.db.New()
+	data, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+	m := &logModel{}
+	if err := session.First(m, id).Error; err != nil {
+		return err
+	}
+	m.Data = data
+	if err := session.Save(m).Error; err != nil {
+		return err
+	}
 	return nil
 }
 

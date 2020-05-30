@@ -82,6 +82,27 @@ func testUpdateNotExist(store core.LogStore, t *testing.T) {
 	}
 }
 
+func testDelete(store core.LogStore, t *testing.T) {
+	r := bytes.NewBuffer([]byte("delete"))
+	id, err := store.Create(r)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if err := store.Delete(id); err != nil {
+		t.Error(err)
+		return
+	}
+	if _, err := store.Find(id); err == nil || !gorm.IsRecordNotFoundError(err) {
+		t.Fail()
+		return
+	}
+	if err := store.Delete(1234); err == nil || !gorm.IsRecordNotFoundError(err) {
+		t.Fail()
+		return
+	}
+}
+
 func TestLogStore(t *testing.T) {
 	dir, _ := os.Getwd()
 	tempFile, err := ioutil.TempFile(dir, `*.db`)
@@ -119,5 +140,8 @@ func TestLogStore(t *testing.T) {
 	t.Run("Test Update", func(t *testing.T) {
 		testUpdate(store, t)
 		testUpdateNotExist(store, t)
+	})
+	t.Run("Test Delete", func(t *testing.T) {
+		testDelete(store, t)
 	})
 }

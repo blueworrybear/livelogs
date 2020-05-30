@@ -67,5 +67,13 @@ func (s *logStore) Update(id int64, r io.Reader) error {
 }
 
 func (s *logStore) Delete(id int64) error {
+	session := s.db.New()
+	m := &logModel{}
+	if err := session.First(m, id).Error; err != nil {
+		return err
+	}
+	if err := session.Delete(m).Error; err != nil {
+		return err
+	}
 	return nil
 }

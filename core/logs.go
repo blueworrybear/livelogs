@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-//go:generate mockgen -package core -destination logs_mock.go . LogStore
+//go:generate mockgen -package mock -destination ../mock/logs_mock.go . LogStore,LogStream
 
 // LogLine holds line information in log
 type LogLine struct {
@@ -34,10 +34,10 @@ type LogStream interface {
 // Log is a log file
 type Log interface {
 	ID() int64
-	Write(line *LogLine) error
-	Save() error
-	Remove() error
-	Tail() <-chan *LogLine
+	Write(ctx context.Context, line *LogLine) error
+	Save(ctx context.Context) error
+	Remove(ctx context.Context) error
+	Tail(ctx context.Context) <-chan *LogLine
 }
 
 // LogManager manages log files

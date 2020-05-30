@@ -37,7 +37,7 @@ type Log interface {
 	Write(ctx context.Context, line *LogLine) error
 	Save(ctx context.Context) error
 	Remove(ctx context.Context) error
-	Tail(ctx context.Context) <-chan *LogLine
+	Tail(ctx context.Context) (<-chan *LogLine, error)
 }
 
 // LogManager manages log files

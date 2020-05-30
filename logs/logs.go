@@ -20,6 +20,7 @@ type LiveLog struct {
 	store  core.LogStore
 }
 
+// NewLiveLog returns a live log implements core.Log
 func NewLiveLog(id int64, stream core.LogStream, store core.LogStore) *LiveLog {
 	return &LiveLog{
 		id:     id,
@@ -49,6 +50,7 @@ func (l *LiveLog) flush() error {
 	return l.store.Update(l.id, br)
 }
 
+// ID is log's identity
 func (l *LiveLog) ID() int64 {
 	return l.id
 }
@@ -64,6 +66,19 @@ func (l *LiveLog) Write(ctx context.Context, line *core.LogLine) error {
 	}
 	l.Unlock()
 	return l.stream.Write(ctx, l.id, line)
+}
+
+func (l *LiveLog) Remove(ctx context.Context) error {
+	l.Lock()
+	defer l.Unlock()
+	if err := l.stream.Delete(ctx, l.id); err != nil {
+		return err
+	}
+	return l.store.Delete(id)
+}
+
+func (l *LiveLog) Tail(ctx context.Context) (<-chan *core.LogLine, error) {
+	return l.stream.Tail(ctx, l.id)
 }
 
 func (l *LiveLog) Save(ctx context.Context) error {

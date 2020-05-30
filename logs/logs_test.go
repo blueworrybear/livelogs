@@ -57,6 +57,6 @@ func TestLiveLogWrite(t *testing.T) {
 
 	ctx := context.Background()
 	bufferSize = 0
-	log := NewLiveLog(int64(1), stream, store)
+	log := NewLiveLog(1, stream, store)
 	log.Write(ctx, &core.LogLine{})
 }

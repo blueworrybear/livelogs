@@ -38,7 +38,7 @@ type Log interface {
 	Write(ctx context.Context, line *LogLine) error
 	Save(ctx context.Context) error
 	Remove(ctx context.Context) error
-	Cat(ctx context.Context) ([]*LogLine ,error)
+	Cat(ctx context.Context) ([]*LogLine, error)
 	Tail(ctx context.Context) (<-chan *LogLine, error)
 	Close(ctx context.Context) error
 }

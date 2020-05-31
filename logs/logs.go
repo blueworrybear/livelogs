@@ -77,6 +77,12 @@ func (l *LiveLog) Remove(ctx context.Context) error {
 	return l.store.Delete(l.id)
 }
 
+func (l *LiveLog) Close(ctx context.Context) error {
+	l.Lock()
+	defer l.Unlock()
+	return l.stream.Delete(ctx, l.id)
+}
+
 func (l *LiveLog) Cat(ctx context.Context) ([]*core.LogLine, error) {
 	rc, err := l.store.Find(l.id)
 	if err != nil {
@@ -93,9 +99,13 @@ func (l *LiveLog) Cat(ctx context.Context) ([]*core.LogLine, error) {
 }
 
 func (l *LiveLog) Tail(ctx context.Context) (<-chan *core.LogLine, error) {
+	l.Lock()
+	defer l.Unlock()
 	return l.stream.Tail(ctx, l.id)
 }
 
 func (l *LiveLog) Save(ctx context.Context) error {
+	l.Lock()
+	defer l.Unlock()
 	return l.flush()
 }

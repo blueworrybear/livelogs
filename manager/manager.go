@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"sync"
 
 	"github.com/blueworrybear/livelogs/core"
 	"github.com/blueworrybear/livelogs/logs"
@@ -17,6 +18,7 @@ import (
 var errLogNotFound = errors.New("Log not found")
 
 type LiveLogManager struct {
+	sync.Mutex
 	store core.LogStore
 	stream core.LogStream
 	logs map[int64]core.Log
@@ -33,6 +35,8 @@ func NewLiveLogManager(db *gorm.DB) *LiveLogManager{
 }
 
 func (m *LiveLogManager) Create() (core.Log, error) {
+	m.Lock()
+	defer m.Unlock()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	lines, err := json.Marshal(make([]*core.LogLine, 0))
@@ -53,6 +57,8 @@ func (m *LiveLogManager) Create() (core.Log, error) {
 }
 
 func (m *LiveLogManager) Open(id int64) (core.Log, error) {
+	m.Lock()
+	defer m.Unlock()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if log, ok := m.logs[id]; ok {
@@ -69,12 +75,15 @@ func (m *LiveLogManager) Open(id int64) (core.Log, error) {
 }
 
 func (m *LiveLogManager) Close(id int64) error {
+	m.Lock()
+	defer m.Unlock()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	if _, ok := m.logs[id]; !ok {
+	log, ok := m.logs[id]
+	if !ok {
 		return errLogNotFound
 	}
-	if err := m.stream.Delete(ctx, id); err != nil {
+	if err := log.Close(ctx); err != nil {
 		return err
 	}
 	delete(m.logs, id)

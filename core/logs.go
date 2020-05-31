@@ -40,6 +40,7 @@ type Log interface {
 	Remove(ctx context.Context) error
 	Cat(ctx context.Context) ([]*LogLine ,error)
 	Tail(ctx context.Context) (<-chan *LogLine, error)
+	Close(ctx context.Context) error
 }
 
 // LogManager manages log files

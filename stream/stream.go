@@ -33,7 +33,7 @@ func (s *streamer) watch(ctx context.Context) <-chan *core.LogLine {
 	s.Unlock()
 	go func() {
 		select {
-		case <-w.closed:
+		case <-w.closec:
 		case <-ctx.Done():
 			w.close()
 		}
@@ -67,19 +67,23 @@ func (s *streamer) close() error {
 type watcher struct {
 	sync.Mutex
 	buffer chan *core.LogLine
-	closed chan struct{}
+	closec chan struct{}
+	closed bool
 }
 
 func newWatcher() *watcher {
 	return &watcher{
 		buffer: make(chan *core.LogLine, bufferSize),
-		closed: make(chan struct{}),
+		closec: make(chan struct{}),
+		closed: false,
 	}
 }
 
 func (w *watcher) notify(line *core.LogLine) {
+	w.Lock()
+	defer w.Unlock()
 	select {
-	case <-w.closed:
+	case <-w.closec:
 	case w.buffer <- line:
 	default:
 	}
@@ -88,11 +92,9 @@ func (w *watcher) notify(line *core.LogLine) {
 func (w *watcher) close() {
 	w.Lock()
 	defer w.Unlock()
-	select {
-	case <-w.closed:
-		// Already closed
-	default:
+	if !w.closed {
 		close(w.buffer)
-		close(w.closed)
+		close(w.closec)
+		w.closed = true
 	}
 }

@@ -92,6 +92,7 @@ func (w *watcher) close() {
 	case <-w.closed:
 		// Already closed
 	default:
+		close(w.buffer)
 		close(w.closed)
 	}
 }

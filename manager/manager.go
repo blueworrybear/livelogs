@@ -19,18 +19,18 @@ var errLogNotFound = errors.New("Log not found")
 
 type LiveLogManager struct {
 	sync.Mutex
-	store core.LogStore
+	store  core.LogStore
 	stream core.LogStream
-	logs map[int64]core.Log
+	logs   map[int64]core.Log
 }
 
-func NewLiveLogManager(db *gorm.DB) *LiveLogManager{
+func NewLiveLogManager(db *gorm.DB) *LiveLogManager {
 	store := store.NewLogStore(db)
 	stream := stream.New()
 	return &LiveLogManager{
-		store: store,
+		store:  store,
 		stream: stream,
-		logs : make(map[int64]core.Log),
+		logs:   make(map[int64]core.Log),
 	}
 }
 

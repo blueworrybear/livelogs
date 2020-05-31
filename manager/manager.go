@@ -17,6 +17,7 @@ import (
 
 var errLogNotFound = errors.New("Log not found")
 
+// LiveLogManager manges opened logs
 type LiveLogManager struct {
 	sync.Mutex
 	store  core.LogStore
@@ -24,6 +25,7 @@ type LiveLogManager struct {
 	logs   map[int64]core.Log
 }
 
+// NewLiveLogManager with gorm database
 func NewLiveLogManager(db *gorm.DB) *LiveLogManager {
 	store := store.NewLogStore(db)
 	stream := stream.New()
@@ -34,6 +36,7 @@ func NewLiveLogManager(db *gorm.DB) *LiveLogManager {
 	}
 }
 
+// Create new log in database and open streaming
 func (m *LiveLogManager) Create() (core.Log, error) {
 	m.Lock()
 	defer m.Unlock()
@@ -56,6 +59,7 @@ func (m *LiveLogManager) Create() (core.Log, error) {
 	return log, nil
 }
 
+// Open log with given id
 func (m *LiveLogManager) Open(id int64) (core.Log, error) {
 	m.Lock()
 	defer m.Unlock()
@@ -74,6 +78,7 @@ func (m *LiveLogManager) Open(id int64) (core.Log, error) {
 	return m.logs[id], nil
 }
 
+// Close log
 func (m *LiveLogManager) Close(id int64) error {
 	m.Lock()
 	defer m.Unlock()

@@ -12,6 +12,7 @@ import (
 
 var bufferSize = 5000
 
+// LiveLog is the based log object
 type LiveLog struct {
 	sync.Mutex
 	id     int64
@@ -55,6 +56,7 @@ func (l *LiveLog) ID() int64 {
 	return l.id
 }
 
+// Write log line
 func (l *LiveLog) Write(ctx context.Context, line *core.LogLine) error {
 	l.Lock()
 	l.buffer = append(l.buffer, line)
@@ -68,6 +70,7 @@ func (l *LiveLog) Write(ctx context.Context, line *core.LogLine) error {
 	return l.stream.Write(ctx, l.id, line)
 }
 
+// Remove log from the database and disable streaming
 func (l *LiveLog) Remove(ctx context.Context) error {
 	l.Lock()
 	defer l.Unlock()
@@ -77,12 +80,16 @@ func (l *LiveLog) Remove(ctx context.Context) error {
 	return l.store.Delete(l.id)
 }
 
+// Close the log and disable streaming
 func (l *LiveLog) Close(ctx context.Context) error {
 	l.Lock()
 	defer l.Unlock()
 	return l.stream.Delete(ctx, l.id)
 }
 
+// Cat the log lines.
+//
+// **NOTE** The content may not be complete before Save()
 func (l *LiveLog) Cat(ctx context.Context) ([]*core.LogLine, error) {
 	rc, err := l.store.Find(l.id)
 	if err != nil {
@@ -98,12 +105,14 @@ func (l *LiveLog) Cat(ctx context.Context) ([]*core.LogLine, error) {
 	return lines, err
 }
 
+// Tail follows the log
 func (l *LiveLog) Tail(ctx context.Context) (<-chan *core.LogLine, error) {
 	l.Lock()
 	defer l.Unlock()
 	return l.stream.Tail(ctx, l.id)
 }
 
+// Save log lines into database
 func (l *LiveLog) Save(ctx context.Context) error {
 	l.Lock()
 	defer l.Unlock()

@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// NewLogManager manages open logs
 func NewLogManager(db *gorm.DB) core.LogManager {
 	return manager.NewLiveLogManager(db)
 }

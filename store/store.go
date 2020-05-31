@@ -18,6 +18,7 @@ type logStore struct {
 	db *gorm.DB
 }
 
+// NewLogStore to database
 func NewLogStore(db *gorm.DB) core.LogStore {
 	db.AutoMigrate(&logModel{})
 	return &logStore{

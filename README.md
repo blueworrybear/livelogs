@@ -51,6 +51,10 @@ func main() {
 
 Above code will keep print out `log`.
 
+# Documentation
+
+[Godoc](https://pkg.go.dev/github.com/blueworrybear/livelogs)
+
 # License
 
 © Benno, 2020

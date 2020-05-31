@@ -32,7 +32,7 @@ func TestLogManager(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			go func ()  {
+			go func() {
 				for i := 0; i < 10; i++ {
 					log.Write(ctx, &core.LogLine{Number: int64(i)})
 				}
@@ -41,7 +41,7 @@ func TestLogManager(t *testing.T) {
 				}
 			}()
 			for {
-				select{
+				select {
 				case <-ctx.Done():
 					t.Log("Race condition...")
 					t.Fail()
@@ -50,7 +50,7 @@ func TestLogManager(t *testing.T) {
 					if !ok {
 						return
 					}
-				case <- time.After(1 * time.Second):
+				case <-time.After(1 * time.Second):
 					t.Logf("Deadlock at %d run", log.ID())
 					t.Fail()
 					return

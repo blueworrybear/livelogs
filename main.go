@@ -6,6 +6,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func NewLogManager (db *gorm.DB) core.LogManager {
+func NewLogManager(db *gorm.DB) core.LogManager {
 	return manager.NewLiveLogManager(db)
 }

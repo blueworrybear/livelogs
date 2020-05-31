@@ -64,6 +64,20 @@ func (mr *MockLogStoreMockRecorder) Delete(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockLogStore)(nil).Delete), arg0)
 }
 
+// Exists mocks base method
+func (m *MockLogStore) Exists(arg0 int64) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Exists", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// Exists indicates an expected call of Exists
+func (mr *MockLogStoreMockRecorder) Exists(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockLogStore)(nil).Exists), arg0)
+}
+
 // Find mocks base method
 func (m *MockLogStore) Find(arg0 int64) (io.ReadCloser, error) {
 	m.ctrl.T.Helper()

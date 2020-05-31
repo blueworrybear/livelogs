@@ -40,6 +40,14 @@ func (s *logStore) Create(r io.Reader) (int64, error) {
 	return m.ID, nil
 }
 
+func (s *logStore) Exists(id int64) bool {
+	m := &logModel{ID: id}
+	if err := s.db.Select("id").First(m).Error; gorm.IsRecordNotFoundError(err) {
+		return false
+	}
+	return true
+}
+
 func (s *logStore) Find(id int64) (io.ReadCloser, error) {
 	session := s.db.New()
 	m := &logModel{}

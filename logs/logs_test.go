@@ -60,3 +60,49 @@ func TestLiveLogWrite(t *testing.T) {
 	log := NewLiveLog(1, stream, store)
 	log.Write(ctx, &core.LogLine{})
 }
+
+func TestLiveLogCat(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	store := mock.NewMockLogStore(ctrl)
+	stream := mock.NewMockLogStream(ctrl)
+
+	expectLines := make([]*core.LogLine, 0)
+	expectLines = append(expectLines, &core.LogLine{})
+	expectLines = append(expectLines, &core.LogLine{})
+	data, err := json.Marshal(expectLines)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	mockR := ioutil.NopCloser(bytes.NewReader(data))
+	store.EXPECT().Find(gomock.Eq(int64(1))).Return(mockR, nil)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	log := NewLiveLog(1, stream, store)
+	lines, err := log.Cat(ctx)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if len(lines) != 2 {
+		t.Fail()
+		return
+	}
+
+	emptyLines, err := json.Marshal(make([]*core.LogLine, 0))
+	empty := ioutil.NopCloser(bytes.NewReader(emptyLines))
+	store.EXPECT().Find(gomock.Eq(int64(2))).Return(empty, nil)
+	log = NewLiveLog(2, stream, store)
+	lines, err = log.Cat(ctx)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if len(lines) != 0 {
+		t.Fail()
+		return
+	}
+}

@@ -77,6 +77,21 @@ func (l *LiveLog) Remove(ctx context.Context) error {
 	return l.store.Delete(l.id)
 }
 
+func (l *LiveLog) Cat(ctx context.Context) ([]*core.LogLine, error) {
+	rc, err := l.store.Find(l.id)
+	if err != nil {
+		return nil, err
+	}
+	defer rc.Close()
+	data, err := ioutil.ReadAll(rc)
+	if err != nil {
+		return nil, err
+	}
+	var lines []*core.LogLine
+	err = json.Unmarshal(data, &lines)
+	return lines, err
+}
+
 func (l *LiveLog) Tail(ctx context.Context) (<-chan *core.LogLine, error) {
 	return l.stream.Tail(ctx, l.id)
 }

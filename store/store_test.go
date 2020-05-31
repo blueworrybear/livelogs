@@ -24,6 +24,22 @@ func testCreate(store core.LogStore, t *testing.T) {
 	}
 }
 
+func testExist(store core.LogStore, t *testing.T) {
+	id, err := store.Create(bytes.NewBuffer([]byte("test")))
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if ok := store.Exists(id); !ok {
+		t.Fail()
+		return
+	}
+	if ok := store.Exists(1234); ok {
+		t.Fail()
+		return
+	}
+}
+
 func testFind(store core.LogStore, t *testing.T) {
 	r := bytes.NewBuffer([]byte("find me!"))
 	id, err := store.Create(r)
@@ -134,6 +150,9 @@ func TestLogStore(t *testing.T) {
 		t.Logf("Count: %d", count)
 		t.Fail()
 	}
+	t.Run("Test Exist", func (t *testing.T) {
+		testExist(store, t)
+	})
 	t.Run("Test Find", func(t *testing.T) {
 		testFind(store, t)
 	})

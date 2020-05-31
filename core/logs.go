@@ -18,6 +18,7 @@ type LogLine struct {
 // LogStore is a storage to save log output
 type LogStore interface {
 	Create(r io.Reader) (int64, error)
+	Exists(id int64) bool
 	Find(id int64) (io.ReadCloser, error)
 	Update(id int64, r io.Reader) error
 	Delete(id int64) error
@@ -37,11 +38,13 @@ type Log interface {
 	Write(ctx context.Context, line *LogLine) error
 	Save(ctx context.Context) error
 	Remove(ctx context.Context) error
+	Cat(ctx context.Context) ([]*LogLine ,error)
 	Tail(ctx context.Context) (<-chan *LogLine, error)
 }
 
 // LogManager manages log files
 type LogManager interface {
-	Create() Log
-	Find(id int64) Log
+	Create() (Log, error)
+	Open(id int64) (Log, error)
+	Close(id int64) error
 }
